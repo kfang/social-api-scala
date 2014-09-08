@@ -2,7 +2,8 @@ package ninja.fangs.instagram
 
 import ninja.fangs.instagram.models.{Error, AuthResponse}
 import spray.json._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scalaj.http.Http
 
 /**
@@ -49,6 +50,6 @@ object AuthService {
   def requestImplicitUrl(scopes: IGAuthScope*): String = {
     Config.AUTH_IMPLICIT_URL + "&" + genScopeParam(scopes)
   }
-
 }
+
 
