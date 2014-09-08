@@ -1,4 +1,4 @@
-scala-instagram
+Social Network API Integration Library for Scala
 ===============
 
 Scala Client for Instagram API
