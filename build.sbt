@@ -1,11 +1,10 @@
-name := "scala-instagram"
+name := "social-api-scala"
 
-organization  := "ninja.fangs"
+organization  := "com.github.kfang"
 
 scalaVersion  := "2.10.3"
 
 scalacOptions ++= Seq("-feature", "-deprecation")
-
 
 resolvers += "spray" at "http://repo.spray.io/"
 
