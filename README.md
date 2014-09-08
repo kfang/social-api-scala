@@ -19,43 +19,5 @@ instagram-client {
 }
 ```
 
-#Authentication Service
-###Request Explicit Login Flow Url
-```scala
-AuthService.requestExplicitUrl(Basic, Comments, Relationships, Likes)
-```
-
-###Request Implicit Login Flow Url
-```scala
-AuthService.requestImplicitUrl(Basic, Comments, Relationships, Likes)
-```
-
-###Request Access Token
-```scala
-AuthService.requestAccessToken(code)
-```
-
-#Users Service
-###Request User Information
-```scala
-//for self
-UsersService.getInfo("ACCESS_TOKEN")
-
-//for another user
-UsersService.getInfo("USER_ID", "ACCESS_TOKEN")
-```
-
-#Relationships Service
-###Request User's Follows
-```scala
-//for self
-val fr: Future[FollowsResponse] = RelationshipsService.getFollows("ACCESS_TOKEN")
-
-//for another user
-val fr: Future[FollowsResponse] = RelationshipsService.getFollows("USER_ID", "ACCESS_TOKEN")
-
-//pagination
-// - if there is no next, it will return an empty list in 'data'
-// - you can also check if there is a next with 'fr.map(_.hasNext)'
-fr.flatMap(_.next)
-```
+#Usage
+check out the [wiki](https://github.com/kfang/social-api-scala/wiki) for instructions
