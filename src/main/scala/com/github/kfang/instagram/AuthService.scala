@@ -1,9 +1,10 @@
-package ninja.fangs.instagram
+package com.github.kfang.instagram
 
-import ninja.fangs.instagram.models.{Error, AuthResponse}
+import com.github.kfang.Config
+import com.github.kfang.instagram.models.{Error, AuthResponse}
+import com.typesafe.config.ConfigFactory
 import spray.json._
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scalaj.http.Http
 
 /**
@@ -11,6 +12,20 @@ import scalaj.http.Http
  */
 object AuthService {
 
+  private val CONFIG = ConfigFactory.load().getConfig("instagram-client")
+  private val CLIENT_ID       = CONFIG.getString("id")
+  private val CLIENT_SECRET   = CONFIG.getString("secret")
+  private val REDIRECT_URI    = CONFIG.getString("redirect-uri")
+
+  //Authentication URLs
+  private val AUTH_EXPLICIT_URL =
+    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&response_type=code"
+  private val AUTH_IMPLICIT_URL =
+    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&response_type=token"
+  private val REQUEST_ACCESS_TOKEN =
+    s"https://api.instagram.com/oauth/access_token"
+
+  //Scope Permissions
   sealed trait IGAuthScope
   case object Basic extends IGAuthScope { override def toString = "basic"}
   case object Comments extends IGAuthScope { override def toString = "comments" }
@@ -23,10 +38,10 @@ object AuthService {
 
   def requestAccessToken(code: String)(implicit ec: ExecutionContext): Future[AuthResponse] = Future {
     val data = Map(
-      "client_id" -> Config.CLIENT_ID,
-      "client_secret" -> Config.CLIENT_SECRET,
+      "client_id" -> CLIENT_ID,
+      "client_secret" -> CLIENT_SECRET,
       "grant_type" -> "authorization_code",
-      "redirect_uri" -> Config.REDIRECT_URI,
+      "redirect_uri" -> REDIRECT_URI,
       "code" -> code
     )
       .toList
@@ -34,7 +49,7 @@ object AuthService {
       .mkString("&")
 
       Http
-        .postData(Config.REQUEST_ACCESS_TOKEN, data)
+        .postData(REQUEST_ACCESS_TOKEN, data)
         .options(Config.HTTP_OPTS)
         .asString
         .parseJson
@@ -44,11 +59,11 @@ object AuthService {
   }
 
   def requestExplicitUrl(scopes: IGAuthScope*): String = {
-    Config.AUTH_EXPLICIT_URL + "&" + genScopeParam(scopes)
+    AUTH_EXPLICIT_URL + "&" + genScopeParam(scopes)
   }
 
   def requestImplicitUrl(scopes: IGAuthScope*): String = {
-    Config.AUTH_IMPLICIT_URL + "&" + genScopeParam(scopes)
+    AUTH_IMPLICIT_URL + "&" + genScopeParam(scopes)
   }
 }
 

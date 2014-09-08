@@ -1,6 +1,6 @@
-package ninja.fangs.instagram.models
+package com.github.kfang.instagram.models
 
-import ninja.fangs.instagram.Config
+import com.github.kfang.Config
 import spray.json._
 import scala.concurrent.{ExecutionContext, Future}
 import scalaj.http.Http

@@ -1,6 +1,7 @@
-package ninja.fangs.instagram
+package com.github.kfang.instagram
 
-import ninja.fangs.instagram.models.{FollowsResponse, User}
+import com.github.kfang.Config
+import com.github.kfang.instagram.models.{FollowsResponse, User}
 import spray.json._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, ExecutionContext}

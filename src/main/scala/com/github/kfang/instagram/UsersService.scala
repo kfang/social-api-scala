@@ -1,6 +1,7 @@
-package ninja.fangs.instagram
+package com.github.kfang.instagram
 
-import ninja.fangs.instagram.models.{Error, UserInfo}
+import com.github.kfang.Config
+import com.github.kfang.instagram.models.{Error, UserInfo}
 import spray.json._
 import scala.concurrent.{ExecutionContext, Future}
 import scalaj.http.Http

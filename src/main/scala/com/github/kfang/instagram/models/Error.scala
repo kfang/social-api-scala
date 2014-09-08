@@ -1,4 +1,4 @@
-package ninja.fangs.instagram.models
+package com.github.kfang.instagram.models
 
 import spray.json._
 import scala.util.{Failure, Success, Try}
