@@ -1,0 +1,7 @@
+instagram-client {
+  read-timeout: 10000,
+  connect-timeout: 10000,
+  id: "CLIENT-ID",
+  secret: "CLIENT-SECRET"
+  redirect-uri: "REDIRECT-URL"
+}
