@@ -1,7 +1,7 @@
 Social Network API Integration Library for Scala
 ===============
 
-Scala Client for Instagram API
+Scala Client for Instagram, Facebook, Google Plus, Twitter API
 I should probably say that this is a **dogfooding** library. If something is missing that you *really* want, feel free to file an issue or create a pull-request. I'd be more than happy to take a look.
 
 #Config
