@@ -20,4 +20,10 @@ instagram-client {
 ```
 
 #Usage
+for build.sbt
+```
+libraryDependencies ++= Seq(
+    "com.github.kfang"        %% "social-api-scala"       % "0.1"
+)
+```
 check out the [wiki](https://github.com/kfang/social-api-scala/wiki) for instructions
