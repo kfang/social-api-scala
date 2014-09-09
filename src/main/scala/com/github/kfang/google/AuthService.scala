@@ -4,9 +4,8 @@ import com.github.kfang.Config
 import com.github.kfang.google.models.AuthResponse
 import com.typesafe.config.ConfigFactory
 import spray.json._
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scalaj.http.{HttpException, Http}
+import scala.concurrent.{ExecutionContext, Future}
+import scalaj.http.Http
 
 /**
  * https://developers.google.com/accounts/docs/OAuth2Login

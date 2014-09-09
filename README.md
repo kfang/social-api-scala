@@ -17,6 +17,12 @@ instagram-client {
   secret: "CLIENT-SECRET",
   redirect-uri: "REDIRECT-URL"
 }
+
+google-client {
+  id: "CLIENT-ID",
+  secret: "CLIENT-SECRET",
+  redirect-uri: "REDIRECT-URL"
+}
 ```
 
 #Usage
