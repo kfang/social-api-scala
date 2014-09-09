@@ -43,7 +43,6 @@ object UsersService {
     case e => throw models.Error.parse(e)
   }
 
-
 }
 
 
