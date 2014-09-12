@@ -1,31 +1,29 @@
 package com.github.kfang.instagram
 
-import com.github.kfang.Config
-import com.github.kfang.instagram.models.{FollowsResponse, User}
+import com.github.kfang.instagram.models.FollowsResponse
 import spray.json._
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future, ExecutionContext}
+import scala.concurrent.{Future, ExecutionContext}
 import scalaj.http.Http
 
 /**
  * http://instagram.com/developer/endpoints/relationships/#
  */
-object RelationshipsService {
+class RelationshipsService(accessToken: String, instagram: InstagramAPI) {
 
-  def getFollowsURL(userID: String, accessToken: String) = {
+  def getFollowsURL(userID: String) = {
     s"https://api.instagram.com/v1/users/$userID/follows?access_token=$accessToken"
   }
 
-  def getFollows(userID: String, accessToken: String)(implicit ec: ExecutionContext): Future[FollowsResponse] = Future {
-    val url = getFollowsURL(userID, accessToken)
-    val res = Http.get(url).options(Config.HTTP_OPTS).asString
+  def getFollows(userID: String)(implicit ec: ExecutionContext): Future[FollowsResponse] = Future {
+    val url = getFollowsURL(userID)
+    val res = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString
     res.parseJson.asJsObject.convertTo[FollowsResponse]
   } recover {
     case e => throw models.Error.parse(e)
   }
 
-  def getFollows(accessToken: String)(implicit ec: ExecutionContext): Future[FollowsResponse] = {
-    getFollows("self", accessToken)
+  def getFollows(implicit ec: ExecutionContext): Future[FollowsResponse] = {
+    getFollows("self")
   }
 
 }

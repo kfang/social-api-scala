@@ -1,8 +1,8 @@
 package com.github.kfang.instagram
 
-import com.github.kfang.Config
+import com.github.kfang.ClientConfig
 import com.github.kfang.instagram.models.{Error, AuthResponse}
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
 import spray.json._
 import scala.concurrent.{ExecutionContext, Future}
 import scalaj.http.Http
@@ -10,12 +10,13 @@ import scalaj.http.Http
 /**
  * http://instagram.com/developer/authentication/#
  */
-object AuthService {
+class InstagramAPI(config: Config){
 
-  private val CONFIG = ConfigFactory.load().getConfig("instagram-client")
-  private val CLIENT_ID       = CONFIG.getString("id")
-  private val CLIENT_SECRET   = CONFIG.getString("secret")
-  private val REDIRECT_URI    = CONFIG.getString("redirect-uri")
+  val CLIENT_CONFIG   = new ClientConfig(config)
+  val CONFIG          = config.getConfig("instagram-client")
+  val CLIENT_ID       = CONFIG.getString("id")
+  val CLIENT_SECRET   = CONFIG.getString("secret")
+  val REDIRECT_URI    = CONFIG.getString("redirect-uri")
 
   //Authentication URLs
   private val AUTH_EXPLICIT_URL =
@@ -50,7 +51,7 @@ object AuthService {
 
       Http
         .postData(REQUEST_ACCESS_TOKEN, data)
-        .options(Config.HTTP_OPTS)
+        .options(CLIENT_CONFIG.HTTP_OPTS)
         .asString
         .parseJson
         .convertTo[AuthResponse]
@@ -65,6 +66,11 @@ object AuthService {
   def requestImplicitUrl(scopes: IGAuthScope*): String = {
     AUTH_IMPLICIT_URL + "&" + genScopeParam(scopes)
   }
+
+  //accessors for different services
+  def usersService(accessToken: String): UsersService = new UsersService(accessToken, this)
+  def relationshipsService(accessToken: String): RelationshipsService = new RelationshipsService(accessToken, this)
+
 }
 
 

@@ -1,22 +1,23 @@
 package com.github.kfang.google
 
-import com.github.kfang.Config
+import com.github.kfang.ClientConfig
 import com.github.kfang.google.models.AuthResponse
-import com.typesafe.config.ConfigFactory
-import spray.json._
+import com.typesafe.config.Config
 import scala.concurrent.{ExecutionContext, Future}
 import scalaj.http.Http
+import spray.json._
 
 /**
  * https://developers.google.com/accounts/docs/OAuth2Login
  * https://developers.google.com/youtube/v3/guides/authentication#server-side-apps
  */
-object AuthService {
+class GoogleAPI(config: Config) {
 
-  private val CONFIG = ConfigFactory.load().getConfig("google-client")
-  private val CLIENT_ID       = CONFIG.getString("id")
-  private val CLIENT_SECRET   = CONFIG.getString("secret")
-  private val REDIRECT_URI    = CONFIG.getString("redirect-uri")
+  val CLIENT_CONFIG   = new ClientConfig(config)
+  val CONFIG          = config.getConfig("google-client")
+  val CLIENT_ID       = CONFIG.getString("id")
+  val CLIENT_SECRET   = CONFIG.getString("secret")
+  val REDIRECT_URI    = CONFIG.getString("redirect-uri")
 
   private val OAUTH2_CODE_REQUEST_URL = "https://accounts.google.com/o/oauth2/auth"
   private val OAUTH2_ACCESS_TOKEN_REQUEST_URL = "https://accounts.google.com/o/oauth2/token"
@@ -50,10 +51,16 @@ object AuthService {
       "grant_type" -> "authorization_code"
     ).map(t => s"${t._1}=${t._2}").mkString("&")
 
-    val res = Http.postData(OAUTH2_ACCESS_TOKEN_REQUEST_URL, data).options(Config.HTTP_OPTS).asString
+    val res = Http.postData(OAUTH2_ACCESS_TOKEN_REQUEST_URL, data).options(CLIENT_CONFIG.HTTP_OPTS).asString
     res.parseJson.convertTo[AuthResponse]
   } recover {
     case e => throw models.Error.parse(e)
   }
 
+
+  //accessors for different services
+  def usersService(accessToken: String) = new UsersService(accessToken, this)
+
 }
+
+
