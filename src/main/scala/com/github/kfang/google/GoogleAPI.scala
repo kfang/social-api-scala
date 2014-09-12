@@ -3,7 +3,7 @@ package com.github.kfang.google
 import com.github.kfang.ClientConfig
 import com.github.kfang.google.models.AuthResponse
 import com.typesafe.config.Config
-import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 import scalaj.http.Http
 import spray.json._
 
@@ -42,7 +42,7 @@ class GoogleAPI(config: Config) {
     s"$OAUTH2_CODE_REQUEST_URL?$params"
   }
 
-  def requestAccessToken(code: String)(implicit ec: ExecutionContext): Future[AuthResponse] = Future {
+  def requestAccessToken(code: String): AuthResponse = Try {
     val data = List(
       "code" -> code,
       "client_id" -> CLIENT_ID,
@@ -53,8 +53,9 @@ class GoogleAPI(config: Config) {
 
     val res = Http.postData(OAUTH2_ACCESS_TOKEN_REQUEST_URL, data).options(CLIENT_CONFIG.HTTP_OPTS).asString
     res.parseJson.convertTo[AuthResponse]
-  } recover {
-    case e => throw models.Error.parse(e)
+  } match {
+    case Success(ar) => ar
+    case Failure(e)  => throw models.Error.parse(e)
   }
 
 

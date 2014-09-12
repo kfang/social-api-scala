@@ -4,7 +4,7 @@ import com.github.kfang.ClientConfig
 import com.github.kfang.instagram.models.{Error, AuthResponse}
 import com.typesafe.config.Config
 import spray.json._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try, Success}
 import scalaj.http.Http
 
 /**
@@ -37,7 +37,7 @@ class InstagramAPI(config: Config){
     if(scopes.size == 0) "" else "scope=" + scopes.mkString("+")
   }
 
-  def requestAccessToken(code: String)(implicit ec: ExecutionContext): Future[AuthResponse] = Future {
+  def requestAccessToken(code: String): AuthResponse = Try {
     val data = Map(
       "client_id" -> CLIENT_ID,
       "client_secret" -> CLIENT_SECRET,
@@ -55,8 +55,9 @@ class InstagramAPI(config: Config){
         .asString
         .parseJson
         .convertTo[AuthResponse]
-  } recover {
-    case e => throw Error.parse(e)
+  } match {
+    case Success(ar) => ar
+    case Failure(e)  => throw Error.parse(e)
   }
 
   def requestExplicitUrl(scopes: IGAuthScope*): String = {
