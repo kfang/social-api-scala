@@ -10,10 +10,6 @@ import spray.json._
  */
 class UsersService(accessToken: String, google: GoogleAPI) {
 
-  sealed trait PeopleCollectionList
-  case object Connected extends PeopleCollectionList { override def toString = "connected" }
-  case object Visible extends PeopleCollectionList { override def toString = "visible" }
-
   def getUserInfoURL(userID: String, accessToken: String) =
     s"https://www.googleapis.com/plus/v1/people/$userID?access_token=$accessToken"
 

@@ -22,15 +22,9 @@ class GoogleAPI(config: Config) {
   private val OAUTH2_CODE_REQUEST_URL = "https://accounts.google.com/o/oauth2/auth"
   private val OAUTH2_ACCESS_TOKEN_REQUEST_URL = "https://accounts.google.com/o/oauth2/token"
 
-  sealed trait GoogleAuthScope
-  case object OpenID extends GoogleAuthScope { override def toString = "openid" }
-  case object Email extends GoogleAuthScope { override def toString = "email" }
-  case object Profile extends GoogleAuthScope { override def toString = "profile" }
-  case object PlusLogin extends GoogleAuthScope {override def toString = "https://www.googleapis.com/auth/plus.login" }
-
   //'state' is like a session ID - verifies that the user who authenticated is the person who sent the auth code
   def getAccountsOauth2URL(state: String, scope: GoogleAuthScope, scopes: GoogleAuthScope*): String = {
-    val allScopes = List(scope).++(scopes)
+    val allScopes = List(scope.value).++(scopes.map(_.value))
     val params = List(
       "client_id" -> CLIENT_ID,
       "response_type" -> "code",

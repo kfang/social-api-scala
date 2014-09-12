@@ -26,15 +26,8 @@ class InstagramAPI(config: Config){
   private val REQUEST_ACCESS_TOKEN =
     s"https://api.instagram.com/oauth/access_token"
 
-  //Scope Permissions
-  sealed trait IGAuthScope
-  case object Basic extends IGAuthScope { override def toString = "basic"}
-  case object Comments extends IGAuthScope { override def toString = "comments" }
-  case object Relationships extends IGAuthScope { override def toString = "relationships" }
-  case object Likes extends IGAuthScope { override def toString = "likes" }
-
   private def genScopeParam(scopes: Seq[IGAuthScope]): String = {
-    if(scopes.size == 0) "" else "scope=" + scopes.mkString("+")
+    if(scopes.size == 0) "" else "scope=" + scopes.map(_.value).mkString("+")
   }
 
   def requestAccessToken(code: String): AuthResponse = Try {
