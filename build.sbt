@@ -8,7 +8,7 @@ organization  := "com.github.kfang"
 
 scalaVersion  := "2.10.3"
 
-version := "0.2"
+version := "0.3"
 
 scalacOptions ++= Seq("-feature", "-deprecation")
 
