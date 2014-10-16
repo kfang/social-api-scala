@@ -76,12 +76,16 @@ object ExampleFlows {
     //create the client
     val client = new TwitterAPI(ConfigFactory.load)
 
-    //get bearer token
-    val bearerToken = client.getBearerToken
-    println("bearer token: " + bearerToken)
+    //get a request token
+    val request_token = client.getRequestToken
+    println(client.getRequestAuthorizeURL(request_token))
+    println(client.getRequestAuthenticateURL(request_token))
+    val pin_code = Console.readLine("pin_code: ")
+    val access_token = client.getAccessToken(request_token, pin_code)
+    println(access_token)
 
     //get friends ids
-    val friendsService = client.friendsService(bearerToken)
+    val friendsService = client.friendsService(access_token)
     println(friendsService.getFriendsByUserID("1523501"))
   }
 
