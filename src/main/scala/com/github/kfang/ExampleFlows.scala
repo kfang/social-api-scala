@@ -3,6 +3,7 @@ package com.github.kfang
 import com.github.kfang.facebook.FacebookAPI
 import com.github.kfang.google.{PeopleCollectionList, GoogleAuthScope, GoogleAPI}
 import com.github.kfang.instagram.{IGAuthScope, InstagramAPI}
+import com.github.kfang.twitter.TwitterAPI
 import com.typesafe.config.ConfigFactory
 import spray.json._
 import scala.util.Random
@@ -69,6 +70,19 @@ object ExampleFlows {
 
     println("Friends:\n" + u.getUserFriends.toJson.prettyPrint)
 
+  }
+
+  def main(args: Array[String]): Unit = {
+    //create the client
+    val client = new TwitterAPI(ConfigFactory.load)
+
+    //get bearer token
+    val bearerToken = client.getBearerToken
+    println("bearer token: " + bearerToken)
+
+    //get friends ids
+    val friendsService = client.friendsService(bearerToken)
+    println(friendsService.getFriendsByUserID("1523501"))
   }
 
 }

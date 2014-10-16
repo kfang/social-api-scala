@@ -14,3 +14,8 @@ google-client {
   secret: "CLIENT-SECRET",
   redirect-uri: "REDIRECT-URL"
 }
+
+twitter-client {
+  key: "CONSUMER_KEY",
+  secret: "CONSUMER_SECRET"
+}
