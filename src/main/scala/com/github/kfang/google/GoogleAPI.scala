@@ -46,7 +46,7 @@ class GoogleAPI(config: Config) {
     ).map(t => s"${t._1}=${t._2}").mkString("&")
 
     val res = Http.postData(OAUTH2_ACCESS_TOKEN_REQUEST_URL, data).options(CLIENT_CONFIG.HTTP_OPTS).asString
-    res.parseJson.convertTo[AuthResponse]
+    res.asJson.convertTo[AuthResponse]
   } match {
     case Success(ar) => ar
     case Failure(e)  => throw models.Error.parse(e)

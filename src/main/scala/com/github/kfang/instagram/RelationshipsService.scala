@@ -17,7 +17,7 @@ class RelationshipsService(accessToken: String, instagram: InstagramAPI) {
   def getFollows(userID: String): FollowsResponse = Try {
     val url = getFollowsURL(userID)
     val res = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString
-    res.parseJson.asJsObject.convertTo[FollowsResponse]
+    res.asJson.asJsObject.convertTo[FollowsResponse]
   } match {
     case Success(fr) => fr
     case Failure(e)  => throw models.Error.parse(e)

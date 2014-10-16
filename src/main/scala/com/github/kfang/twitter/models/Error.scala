@@ -22,7 +22,7 @@ object Error extends DefaultJsonProtocol {
 
   def parse: Throwable => Error = {
     case e: Error         => e
-    case e: HttpException => Try(e.body.parseJson.convertTo[Error]) match {
+    case e: HttpException => Try(e.body.asJson.convertTo[Error]) match {
       case Success(err) => err
       case Failure(_)   => Error(List(ErrorItem(e.code, e.body, "http-exception")))
     }

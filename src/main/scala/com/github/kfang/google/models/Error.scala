@@ -13,7 +13,7 @@ object Error extends DefaultJsonProtocol {
   implicit val errorJS = jsonFormat2(Error.apply)
 
   private def parseHttpException(e: HttpException): Error = Try {
-    val err = e.body.parseJson.asJsObject.fields("error").convertTo[String]
+    val err = e.body.asJson.asJsObject.fields("error").convertTo[String]
     Error(err, e.code)
   } match {
     case Success(s) => s

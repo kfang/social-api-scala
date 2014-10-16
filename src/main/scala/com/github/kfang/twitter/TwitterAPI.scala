@@ -21,6 +21,9 @@ class TwitterAPI(config: Config) {
   /**
    * PIN-based Authentication
    * https://dev.twitter.com/oauth/pin-based
+   * Step 1 - user the consumer_token to get a request_token
+   * Step 2 - sent the user to a url to authorize the app and get a PIN code
+   * Step 3 - use the consumer_token, request_token, and the user's PIN code to get a user access_token
    */
   //OAUTH 1.0:
   //Step 1: https://dev.twitter.com/oauth/reference/post/oauth/request_token
@@ -76,7 +79,7 @@ class TwitterAPI(config: Config) {
     val auth_response = Http.postData(OAUTH_TOKEN_URL, auth_body).method("POST").headers(auth_header)
 
     //parse response
-    val auth_fields = auth_response.asString.parseJson.asJsObject.fields
+    val auth_fields = auth_response.asString.asJson.asJsObject.fields
     auth_fields("access_token").convertTo[String]
   } match {
     case Success(token) => token

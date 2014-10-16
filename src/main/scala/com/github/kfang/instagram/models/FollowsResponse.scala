@@ -19,7 +19,7 @@ object FollowsResponse extends DefaultJsonProtocol {
     def next(timeout: Int = 2000): FollowsResponse = Try {
       if(fr.pagination.next_url.isDefined) {
         val HTTP_OPTS = List(HttpOptions.readTimeout(timeout), HttpOptions.connTimeout(timeout))
-        val res = Http.get(fr.pagination.next_url.get).options(HTTP_OPTS).asString.parseJson
+        val res = Http.get(fr.pagination.next_url.get).options(HTTP_OPTS).asString.asJson
         res.convertTo[FollowsResponse]
       } else {
         fr.copy(data = List())

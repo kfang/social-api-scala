@@ -46,7 +46,7 @@ class InstagramAPI(config: Config){
         .postData(REQUEST_ACCESS_TOKEN, data)
         .options(CLIENT_CONFIG.HTTP_OPTS)
         .asString
-        .parseJson
+        .asJson
         .convertTo[AuthResponse]
   } match {
     case Success(ar) => ar

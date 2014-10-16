@@ -14,7 +14,7 @@ class UsersService(accessToken: String, instagram: InstagramAPI) {
 
   def getInfo(userID: String): UserInfo = Try {
     val url = getUserInfoURL(userID)
-    val response = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString.parseJson
+    val response = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
     response.asJsObject.fields("data").convertTo[UserInfo]
   } match {
     case Success(ui) => ui

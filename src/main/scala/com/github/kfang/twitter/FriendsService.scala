@@ -31,7 +31,7 @@ class FriendsService(access_token: Token, client: TwitterAPI) {
 
     val friends_response = Http.get(FRIENDS_URL).params(request_params)
       .oauth(client.CONSUMER_TOKEN, access_token)
-      .asString.parseJson.convertTo[FriendsResponse]
+      .asString.asJson.convertTo[FriendsResponse]
 
     val friendIds = friends_response.ids
     if(friendIds.size < 5000) {

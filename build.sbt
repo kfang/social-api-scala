@@ -17,7 +17,7 @@ resolvers += "spray" at "http://repo.spray.io/"
 libraryDependencies ++= Seq(
   "org.scalaj"              %% "scalaj-http"            % "0.3.14",
   "com.typesafe"            %  "config"                 % "1.2.1",
-  "io.spray"                %% "spray-json"             % "1.2.6"
+  "io.spray"                %% "spray-json"             % "1.2.5"
 )
 
 pomExtra := {

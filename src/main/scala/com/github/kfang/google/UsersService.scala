@@ -25,7 +25,7 @@ class UsersService(accessToken: String, google: GoogleAPI) {
 
   def getUserInfo(userID: String): UserInfo = Try {
     val url = getUserInfoURL(userID, accessToken)
-    val res = Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.parseJson
+    val res = Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
     res.convertTo[UserInfo]
   } match {
     case Success(ui) => ui
@@ -47,7 +47,7 @@ class UsersService(accessToken: String, google: GoogleAPI) {
       case Some(pt) => getUserFriendsURL(userID, accessToken, collection, pt)
     }
 
-    Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.parseJson.convertTo[PeopleResponse]
+    Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.asJson.convertTo[PeopleResponse]
   } match {
     case Success(pr) => pr
     case Failure(e)  => throw models.Error.parse(e)

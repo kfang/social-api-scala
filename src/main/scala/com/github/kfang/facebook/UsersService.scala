@@ -23,7 +23,7 @@ class UsersService(accessToken: String, facebook: FacebookAPI) {
 
   def getUserInfo(userID: String): UserInfo = Try {
     val url = getUserInfoURL(userID)
-    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.parseJson
+    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
     res.convertTo[UserInfo]
   } match {
     case Success(ui) => ui
@@ -37,7 +37,7 @@ class UsersService(accessToken: String, facebook: FacebookAPI) {
 
   def getUserFriends(userID: String): List[Friend] = Try {
     val url = getUserFriendsURL(userID)
-    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.parseJson
+    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
     res.asJsObject.fields("data").convertTo[List[Friend]]
   } match {
     case Success(fl) => fl
