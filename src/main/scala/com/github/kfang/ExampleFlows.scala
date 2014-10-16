@@ -72,7 +72,7 @@ object ExampleFlows {
 
   }
 
-  def main(args: Array[String]): Unit = {
+  def runTwitter(args: Array[String]): Unit = {
     //create the client
     val client = new TwitterAPI(ConfigFactory.load)
 
@@ -80,7 +80,11 @@ object ExampleFlows {
     val request_token = client.getRequestToken
     println(client.getRequestAuthorizeURL(request_token))
     println(client.getRequestAuthenticateURL(request_token))
+
+    //ask for the pin code
     val pin_code = Console.readLine("pin_code: ")
+
+    //generate the access token
     val access_token = client.getAccessToken(request_token, pin_code)
     println(access_token)
 
