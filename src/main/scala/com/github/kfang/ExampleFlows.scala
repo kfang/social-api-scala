@@ -88,9 +88,9 @@ object ExampleFlows {
     val access_token = client.getAccessToken(request_token, pin_code)
     println(access_token)
 
-    //get friends ids
-    val friendsService = client.friendsService(access_token)
-    println(friendsService.getFriendsByUserID("1523501"))
+    //verify credentials to get user info
+    val usersService = client.usersService(access_token)
+    println(usersService.verifyCredentials)
   }
 
 }

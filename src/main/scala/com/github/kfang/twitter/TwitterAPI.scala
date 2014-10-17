@@ -87,6 +87,7 @@ class TwitterAPI(config: Config) {
   }
 
   def friendsService(access_token: Token) = new FriendsService(access_token, this)
+  def usersService(access_token: Token) = new UsersService(access_token, this)
 
 }
 
