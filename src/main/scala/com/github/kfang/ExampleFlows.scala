@@ -29,6 +29,7 @@ object ExampleFlows {
 
     //get some follows
     val r = client.relationshipsService(accessToken)
+    println("Followers:\n" + r.getFollowers.toJson.prettyPrint)
     println("Relationships:\n" + r.getFollows.toJson.prettyPrint)
 
   }
