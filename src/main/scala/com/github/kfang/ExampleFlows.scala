@@ -91,7 +91,19 @@ object ExampleFlows {
 
     //verify credentials to get user info
     val usersService = client.usersService(access_token)
-    println(usersService.verifyCredentials)
+    val self = usersService.verifyCredentials
+    println(self.toJson.prettyPrint)
+
+    //get friends/followers
+    val friendService = client.friendsService(access_token)
+    println("Friends:\n")
+    println(friendService.getFriends(self.id.toString))
+    println("Followers:\n")
+    println(friendService.getFollowers(self.id.toString))
+  }
+
+  def main (args: Array[String]) {
+    runTwitter(args)
   }
 
 }
