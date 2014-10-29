@@ -30,12 +30,12 @@ class InstagramAPI(config: Config){
     if(scopes.size == 0) "" else "scope=" + scopes.map(_.value).mkString("+")
   }
 
-  def requestAccessToken(code: String): AuthResponse = Try {
+  def requestAccessToken(code: String, redirect_uri: String = REDIRECT_URI): AuthResponse = Try {
     val data = Map(
       "client_id" -> CLIENT_ID,
       "client_secret" -> CLIENT_SECRET,
       "grant_type" -> "authorization_code",
-      "redirect_uri" -> REDIRECT_URI,
+      "redirect_uri" -> redirect_uri,
       "code" -> code
     )
       .toList

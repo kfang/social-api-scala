@@ -78,7 +78,7 @@ object ExampleFlows {
     val client = new TwitterAPI(ConfigFactory.load)
 
     //get a request token
-    val request_token = client.getRequestToken
+    val request_token = client.getRequestToken()
     println(client.getRequestAuthorizeURL(request_token))
     println(client.getRequestAuthenticateURL(request_token))
 

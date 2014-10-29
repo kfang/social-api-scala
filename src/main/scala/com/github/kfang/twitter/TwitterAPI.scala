@@ -29,8 +29,8 @@ class TwitterAPI(config: Config) {
   //Step 1: https://dev.twitter.com/oauth/reference/post/oauth/request_token
   private val OAUTH_REQUEST_TOKEN = "https://api.twitter.com/oauth/request_token"
 
-  def getRequestToken: Token = {
-    val param = ("oauth_callback", "oob")
+  def getRequestToken(oauth_callback: String = "oob"): Token = {
+    val param = ("oauth_callback", oauth_callback)
     Http.post(OAUTH_REQUEST_TOKEN).params(param).oauth(CONSUMER_TOKEN).asToken
   }
 
