@@ -14,7 +14,8 @@ object ExampleFlows {
 
     //create the client
     val client = new InstagramAPI(ConfigFactory.load)
-    println(client.requestExplicitUrl(IGAuthScope.Basic, IGAuthScope.Relationships))
+    val authScopes = Seq(IGAuthScope.Basic, IGAuthScope.Relationships)
+    println(client.requestExplicitUrl(authScopes))
 
     //read down the code
     val code = Console.readLine("code: ")

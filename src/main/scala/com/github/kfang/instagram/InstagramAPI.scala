@@ -19,10 +19,10 @@ class InstagramAPI(config: Config){
   val REDIRECT_URI    = CONFIG.getString("redirect-uri")
 
   //Authentication URLs
-  private val AUTH_EXPLICIT_URL =
-    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&response_type=code"
-  private val AUTH_IMPLICIT_URL =
-    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&response_type=token"
+  private def AUTH_EXPLICIT_URL(redirect_uri: String): String =
+    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$redirect_uri&response_type=code"
+  private def AUTH_IMPLICIT_URL(redirect_uri: String): String =
+    s"https://api.instagram.com/oauth/authorize/?client_id=$CLIENT_ID&redirect_uri=$redirect_uri&response_type=token"
   private val REQUEST_ACCESS_TOKEN =
     s"https://api.instagram.com/oauth/access_token"
 
@@ -53,12 +53,14 @@ class InstagramAPI(config: Config){
     case Failure(e)  => throw Error.parse(e)
   }
 
-  def requestExplicitUrl(scopes: IGAuthScope*): String = {
-    AUTH_EXPLICIT_URL + "&" + genScopeParam(scopes)
+  //response_type=code
+  def requestExplicitUrl(scopes: Seq[IGAuthScope], redirect_uri: String = REDIRECT_URI): String = {
+    AUTH_EXPLICIT_URL(redirect_uri) + "&" + genScopeParam(scopes)
   }
 
-  def requestImplicitUrl(scopes: IGAuthScope*): String = {
-    AUTH_IMPLICIT_URL + "&" + genScopeParam(scopes)
+  //response_type=token
+  def requestImplicitUrl(scopes: Seq[IGAuthScope], redirect_uri: String = REDIRECT_URI): String = {
+    AUTH_IMPLICIT_URL(redirect_uri) + "&" + genScopeParam(scopes)
   }
 
   //accessors for different services
