@@ -31,7 +31,12 @@ class TwitterAPI(config: Config) {
 
   def getRequestToken(oauth_callback: String = "oob"): Token = {
     val param = ("oauth_callback", oauth_callback)
-    Http.post(OAUTH_REQUEST_TOKEN).params(param).oauth(CONSUMER_TOKEN).asToken
+    Http
+      .post(OAUTH_REQUEST_TOKEN)
+      .params(param)
+      .options(CLIENT_CONFIG.HTTP_OPTS)
+      .oauth(CONSUMER_TOKEN)
+      .asToken
   }
 
   //Step 2:
@@ -40,20 +45,24 @@ class TwitterAPI(config: Config) {
   private val OAUTH_REQUEST_AUTHORIZE = "https://api.twitter.com/oauth/authorize"
   private val OAUTH_REQUEST_AUTHENTICATE = "https://api.twitter.com/oauth/authenticate"
 
-  def getRequestAuthorizeURL(request_token: Token) = {
+  def getRequestAuthorizeURL(request_token: Token): String = {
     OAUTH_REQUEST_AUTHORIZE + "?oauth_token=" + request_token.key
   }
 
-  def getRequestAuthenticateURL(request_token: Token) = {
+  def getRequestAuthenticateURL(request_token: Token): String = {
     OAUTH_REQUEST_AUTHENTICATE + "?oauth_token=" + request_token.key
   }
 
   //Step 3: https://dev.twitter.com/oauth/reference/post/oauth/access_token
   private val OAUTH_ACCESS_TOKEN = "https://api.twitter.com/oauth/access_token"
 
-  def getAccessToken(request_token: Token, pin_code: String) = {
+  def getAccessToken(request_token: Token, pin_code: String): Token = {
     val consumer_token = Token(CONSUMER_KEY, CONSUMER_SECRET)
-    Http.post(OAUTH_ACCESS_TOKEN).oauth(consumer_token, request_token, pin_code).asToken
+    Http
+      .post(OAUTH_ACCESS_TOKEN)
+      .options(CLIENT_CONFIG.HTTP_OPTS)
+      .oauth(consumer_token, request_token, pin_code)
+      .asToken
   }
 
   /**
@@ -76,7 +85,11 @@ class TwitterAPI(config: Config) {
     //execute request
     val auth_body = "grant_type=client_credentials"
     val auth_header = "Authorization" -> ("Basic " + base64_creds)
-    val auth_response = Http.postData(OAUTH_TOKEN_URL, auth_body).method("POST").headers(auth_header)
+    val auth_response = Http
+      .postData(OAUTH_TOKEN_URL, auth_body)
+      .options(CLIENT_CONFIG.HTTP_OPTS)
+      .method("POST")
+      .headers(auth_header)
 
     //parse response
     val auth_fields = auth_response.asString.asJson.asJsObject.fields
