@@ -13,6 +13,7 @@ class UsersService(access_token: Token, client: TwitterAPI) {
 
   def verifyCredentials = Try {
     Http.get(VERIFY_CREDENTIALS_URL)
+      .options(client.CLIENT_CONFIG.HTTP_OPTS)
       .oauth(client.CONSUMER_TOKEN, access_token)
       .asString.asJson.convertTo[UserInfo]
   } match {
