@@ -2,7 +2,7 @@ package com.github.kfang.facebook
 
 import scalaj.http.HttpOptions
 
-class FacebookAPI(readTimeout: Int = 10000, connTimeout: Int = 10000) {
+case class FacebookAPI(readTimeout: Int = 10000, connTimeout: Int = 10000) {
 
   val httpOpts = Seq(HttpOptions.readTimeout(readTimeout), HttpOptions.connTimeout(connTimeout))
 
