@@ -16,17 +16,14 @@ object FollowersResponse extends DefaultJsonProtocol {
 
     def hasNext: Boolean = fr.pagination.next_url.isDefined
 
-    def next(timeout: Int = 2000): FollowersResponse = Try {
+    def next(timeout: Int = 2000): FollowersResponse = {
       if(fr.pagination.next_url.isDefined) {
         val HTTP_OPTS = List(HttpOptions.readTimeout(timeout), HttpOptions.connTimeout(timeout))
-        val res = Http.get(fr.pagination.next_url.get).options(HTTP_OPTS).asString.asJson
+        val res = Http(fr.pagination.next_url.get).options(HTTP_OPTS).asString.body.parseJson
         res.convertTo[FollowersResponse]
       } else {
         fr.copy(data = List())
       }
-    } match {
-      case Success(nr) => nr
-      case Failure(e)  => throw Error.parse(e)
     }
 
   }

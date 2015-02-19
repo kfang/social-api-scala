@@ -4,6 +4,10 @@ Social Network API Integration Library for Scala
 Scala Client for Instagram, Facebook, Google Plus, Twitter API
 I should probably say that this is a **dogfooding** library. If something is missing that you *really* want, feel free to file an issue or create a pull-request. I'd be more than happy to take a look.
 
+
+#From 0.4.x to 0.5.x
+0.5.x uses different paradigms and has different dependencies.... so be careful!
+
 #Config
 This library uses the typesafe Config library to store/read out Client ID, Secret, and redirect URLs.
 ```

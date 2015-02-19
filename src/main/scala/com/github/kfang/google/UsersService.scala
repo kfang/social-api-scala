@@ -1,7 +1,6 @@
 package com.github.kfang.google
 
 import com.github.kfang.google.models.{PeopleResponse, UserInfo}
-import scala.util.{Failure, Success, Try}
 import scalaj.http.Http
 import spray.json._
 
@@ -23,13 +22,10 @@ class UsersService(accessToken: String, google: GoogleAPI) {
   //User Info
   def getUserInfo: UserInfo = getUserInfo("me")
 
-  def getUserInfo(userID: String): UserInfo = Try {
+  def getUserInfo(userID: String): UserInfo = {
     val url = getUserInfoURL(userID, accessToken)
-    val res = Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
+    val res = Http(url).options(google.httpOpts).asString.body.parseJson
     res.convertTo[UserInfo]
-  } match {
-    case Success(ui) => ui
-    case Failure(e)  => throw models.Error.parse(e)
   }
 
 
@@ -40,17 +36,14 @@ class UsersService(accessToken: String, google: GoogleAPI) {
   def getUserFriends(userID: String, collection: PeopleCollectionList): PeopleResponse  =
     getUserFriends(userID, collection, None)
 
-  def getUserFriends(userID: String, collection: PeopleCollectionList, pageToken: Option[String]): PeopleResponse = Try {
+  def getUserFriends(userID: String, collection: PeopleCollectionList, pageToken: Option[String]): PeopleResponse = {
 
     val url = pageToken match {
       case None     => getUserFriendsURL(userID, accessToken, collection)
       case Some(pt) => getUserFriendsURL(userID, accessToken, collection, pt)
     }
 
-    Http.get(url).options(google.CLIENT_CONFIG.HTTP_OPTS).asString.asJson.convertTo[PeopleResponse]
-  } match {
-    case Success(pr) => pr
-    case Failure(e)  => throw models.Error.parse(e)
+    Http(url).options(google.httpOpts).asString.body.parseJson.convertTo[PeopleResponse]
   }
 
 }

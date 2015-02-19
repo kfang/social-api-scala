@@ -1,11 +1,10 @@
 package com.github.kfang.facebook
 
-import com.github.kfang.ClientConfig
-import com.typesafe.config.Config
+import scalaj.http.HttpOptions
 
-class FacebookAPI(config: Config) {
+class FacebookAPI(readTimeout: Int = 10000, connTimeout: Int = 10000) {
 
-  val CLIENT_CONFIG   = new ClientConfig(config)
+  val httpOpts = Seq(HttpOptions.readTimeout(readTimeout), HttpOptions.connTimeout(connTimeout))
 
   def usersService(accessToken: String): UsersService = new UsersService(accessToken, this)
 

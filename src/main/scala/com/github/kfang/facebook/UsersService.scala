@@ -2,7 +2,6 @@ package com.github.kfang.facebook
 
 import com.github.kfang.facebook.models.{Friend, UserInfo}
 import spray.json._
-import scala.util.{Failure, Success, Try}
 import scalaj.http.Http
 
 /**
@@ -21,27 +20,20 @@ class UsersService(accessToken: String, facebook: FacebookAPI) {
   def getUserInfo: UserInfo =
     getUserInfo("me")
 
-  def getUserInfo(userID: String): UserInfo = Try {
+  def getUserInfo(userID: String): UserInfo = {
     val url = getUserInfoURL(userID)
-    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
+    val res = Http(url).options(facebook.httpOpts).asString.body.parseJson
     res.convertTo[UserInfo]
-  } match {
-    case Success(ui) => ui
-    case Failure(e)  => throw models.Error.parse(e)
   }
 
 
   //User Friends
-  def getUserFriends: List[Friend] =
-    getUserFriends("me")
+  def getUserFriends: List[Friend] = getUserFriends("me")
 
-  def getUserFriends(userID: String): List[Friend] = Try {
+  def getUserFriends(userID: String): List[Friend] = {
     val url = getUserFriendsURL(userID)
-    val res = Http.get(url).options(facebook.CLIENT_CONFIG.HTTP_OPTS).asString.asJson
+    val res = Http(url).options(facebook.httpOpts).asString.body.parseJson
     res.asJsObject.fields("data").convertTo[List[Friend]]
-  } match {
-    case Success(fl) => fl
-    case Failure(e)  => throw models.Error.parse(e)
   }
 
 }

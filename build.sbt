@@ -6,18 +6,19 @@ name := "social-api-scala"
 
 organization  := "com.github.kfang"
 
-scalaVersion  := "2.10.3"
+scalaVersion  := "2.11.5"
 
-version := "0.4.1-SNAPSHOT"
+crossScalaVersions := Seq("2.10.4", "2.11.5")
+
+version := "0.5.0-SNAPSHOT"
 
 scalacOptions ++= Seq("-feature", "-deprecation")
 
 resolvers += "spray" at "http://repo.spray.io/"
 
 libraryDependencies ++= Seq(
-  "org.scalaj"              %% "scalaj-http"            % "0.3.14",
-  "com.typesafe"            %  "config"                 % "1.2.1",
-  "io.spray"                %% "spray-json"             % "1.2.5"
+  "org.scalaj"              %% "scalaj-http"            % "1.1.4",
+  "io.spray"                %% "spray-json"             % "1.2.6"
 )
 
 pomExtra := {

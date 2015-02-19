@@ -2,7 +2,6 @@ package com.github.kfang.instagram
 
 import com.github.kfang.instagram.models.{FollowersResponse, FollowsResponse}
 import spray.json._
-import scala.util.{Failure, Success, Try}
 import scalaj.http.Http
 
 /**
@@ -17,24 +16,18 @@ class RelationshipsService(accessToken: String, instagram: InstagramAPI) {
     s"https://api.instagram.com/v1/users/$userID/followed-by?access_token=$accessToken"
   }
 
-  def getFollows(userID: String): FollowsResponse = Try {
+  def getFollows(userID: String): FollowsResponse = {
     val url = getFollowsURL(userID)
-    val res = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString
-    res.asJson.asJsObject.convertTo[FollowsResponse]
-  } match {
-    case Success(fr) => fr
-    case Failure(e)  => throw models.Error.parse(e)
+    val res = Http(url).options(instagram.httpOpts).asString
+    res.body.parseJson.asJsObject.convertTo[FollowsResponse]
   }
 
   def getFollows: FollowsResponse = getFollows("self")
 
-  def getFollowers(userID: String): FollowersResponse = Try {
+  def getFollowers(userID: String): FollowersResponse = {
     val url = getFollowersURL(userID)
-    val res = Http.get(url).options(instagram.CLIENT_CONFIG.HTTP_OPTS).asString
-    res.asJson.asJsObject.convertTo[FollowersResponse]
-  } match {
-    case Success(fr) => fr
-    case Failure(e)  => throw models.Error.parse(e)
+    val res = Http(url).options(instagram.httpOpts).asString
+    res.body.parseJson.asJsObject.convertTo[FollowersResponse]
   }
 
   def getFollowers: FollowersResponse = getFollowers("self")

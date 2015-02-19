@@ -2,21 +2,14 @@ package com.github.kfang.twitter
 
 import java.net.URLEncoder
 
-import com.github.kfang.ClientConfig
-import com.typesafe.config.Config
-import scala.util.{Failure, Success, Try}
-import scalaj.http.{Token, Http, Base64}
+import scalaj.http.{HttpOptions, Token, Http, Base64}
 import spray.json._
 import DefaultJsonProtocol._
-import models.Error
 
-class TwitterAPI(config: Config) {
+case class TwitterAPI(key: String, secret: String, readTimeout: Int = 10000, connTimeout: Int = 10000) {
 
-  val CLIENT_CONFIG   = new ClientConfig(config)
-  val CONFIG          = config.getConfig("twitter-client")
-  val CONSUMER_KEY    = CONFIG.getString("key")
-  val CONSUMER_SECRET = CONFIG.getString("secret")
-  val CONSUMER_TOKEN  = Token(CONSUMER_KEY, CONSUMER_SECRET)
+  val token  = Token(key, secret)
+  val httpOpts = Seq(HttpOptions.readTimeout(readTimeout), HttpOptions.connTimeout(connTimeout))
 
   /**
    * PIN-based Authentication
@@ -31,12 +24,12 @@ class TwitterAPI(config: Config) {
 
   def getRequestToken(oauth_callback: String = "oob"): Token = {
     val param = ("oauth_callback", oauth_callback)
-    Http
-      .post(OAUTH_REQUEST_TOKEN)
+    Http(OAUTH_REQUEST_TOKEN)
+      .method("POST")
       .params(param)
-      .options(CLIENT_CONFIG.HTTP_OPTS)
-      .oauth(CONSUMER_TOKEN)
-      .asToken
+      .options(httpOpts)
+      .oauth(token)
+      .asToken.body
   }
 
   //Step 2:
@@ -57,12 +50,10 @@ class TwitterAPI(config: Config) {
   private val OAUTH_ACCESS_TOKEN = "https://api.twitter.com/oauth/access_token"
 
   def getAccessToken(request_token: Token, pin_code: String): Token = {
-    val consumer_token = Token(CONSUMER_KEY, CONSUMER_SECRET)
-    Http
-      .post(OAUTH_ACCESS_TOKEN)
-      .options(CLIENT_CONFIG.HTTP_OPTS)
-      .oauth(consumer_token, request_token, pin_code)
-      .asToken
+    Http(OAUTH_ACCESS_TOKEN)
+      .options(httpOpts)
+      .oauth(token, request_token, pin_code)
+      .asToken.body
   }
 
   /**
@@ -73,10 +64,10 @@ class TwitterAPI(config: Config) {
   //https://dev.twitter.com/oauth/reference/post/oauth2/token
   private val OAUTH_TOKEN_URL = "https://api.twitter.com/oauth2/token"
 
-  def getBearerToken: String = Try {
+  def getBearerToken: String = {
     //url encode key and secret
-    val encoded_key = URLEncoder.encode(CONSUMER_KEY, "UTF-8")
-    val encoded_secret = URLEncoder.encode(CONSUMER_SECRET, "UTF-8")
+    val encoded_key = URLEncoder.encode(key, "UTF-8")
+    val encoded_secret = URLEncoder.encode(secret, "UTF-8")
 
     //concatenate and base64 encode to generate credentials
     val concat_creds = encoded_key + ":" + encoded_secret
@@ -85,18 +76,15 @@ class TwitterAPI(config: Config) {
     //execute request
     val auth_body = "grant_type=client_credentials"
     val auth_header = "Authorization" -> ("Basic " + base64_creds)
-    val auth_response = Http
-      .postData(OAUTH_TOKEN_URL, auth_body)
-      .options(CLIENT_CONFIG.HTTP_OPTS)
+    val auth_response = Http(OAUTH_TOKEN_URL)
+      .postData(auth_body)
+      .options(httpOpts)
       .method("POST")
       .headers(auth_header)
 
     //parse response
-    val auth_fields = auth_response.asString.asJson.asJsObject.fields
+    val auth_fields = auth_response.asString.body.parseJson.asJsObject.fields
     auth_fields("access_token").convertTo[String]
-  } match {
-    case Success(token) => token
-    case Failure(error) => throw Error.parse(error)
   }
 
   def friendsService(access_token: Token) = new FriendsService(access_token, this)

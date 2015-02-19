@@ -1,24 +1,15 @@
 package com.github.kfang.google
 
-import com.github.kfang.ClientConfig
 import com.github.kfang.google.models.AuthResponse
-import com.typesafe.config.Config
-import scala.util.{Failure, Success, Try}
-import scalaj.http.Http
+import scalaj.http.{HttpOptions, Http}
 import spray.json._
 
 /**
  * https://developers.google.com/accounts/docs/OAuth2Login
  * https://developers.google.com/youtube/v3/guides/authentication#server-side-apps
  */
-class GoogleAPI(config: Config) {
-
-  val CLIENT_CONFIG   = new ClientConfig(config)
-  val CONFIG          = config.getConfig("google-client")
-  val CLIENT_ID       = CONFIG.getString("id")
-  val CLIENT_SECRET   = CONFIG.getString("secret")
-  val REDIRECT_URI    = CONFIG.getString("redirect-uri")
-
+case class GoogleAPI(clientId: String, clientSecret: String, clientRedirect: String, connTimeout: Int = 10000, readTimeout: Int = 10000) {
+  val httpOpts = Seq(HttpOptions.readTimeout(readTimeout), HttpOptions.connTimeout(connTimeout))
   private val OAUTH2_CODE_REQUEST_URL = "https://accounts.google.com/o/oauth2/auth"
   private val OAUTH2_ACCESS_TOKEN_REQUEST_URL = "https://accounts.google.com/o/oauth2/token"
 
@@ -26,30 +17,27 @@ class GoogleAPI(config: Config) {
   def getAccountsOauth2URL(state: String, scope: GoogleAuthScope, scopes: GoogleAuthScope*): String = {
     val allScopes = List(scope.value).++(scopes.map(_.value))
     val params = List(
-      "client_id" -> CLIENT_ID,
+      "client_id" -> clientId,
       "response_type" -> "code",
       "scope" -> allScopes.mkString(" "),
-      "redirect_uri" -> REDIRECT_URI,
+      "redirect_uri" -> clientRedirect,
       "state" -> state
     ).map(t => s"${t._1}=${t._2}").mkString("&")
 
     s"$OAUTH2_CODE_REQUEST_URL?$params"
   }
 
-  def requestAccessToken(code: String): AuthResponse = Try {
+  def requestAccessToken(code: String): AuthResponse = {
     val data = List(
       "code" -> code,
-      "client_id" -> CLIENT_ID,
-      "client_secret" -> CLIENT_SECRET,
-      "redirect_uri" -> REDIRECT_URI,
+      "client_id" -> clientId,
+      "client_secret" -> clientSecret,
+      "redirect_uri" -> clientRedirect,
       "grant_type" -> "authorization_code"
     ).map(t => s"${t._1}=${t._2}").mkString("&")
 
-    val res = Http.postData(OAUTH2_ACCESS_TOKEN_REQUEST_URL, data).options(CLIENT_CONFIG.HTTP_OPTS).asString
-    res.asJson.convertTo[AuthResponse]
-  } match {
-    case Success(ar) => ar
-    case Failure(e)  => throw models.Error.parse(e)
+    val res = Http(OAUTH2_ACCESS_TOKEN_REQUEST_URL).postData(data).options(httpOpts).asString
+    res.body.parseJson.convertTo[AuthResponse]
   }
 
 

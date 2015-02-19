@@ -1,4 +1,4 @@
-package com.github.kfang.twitter.models
+package com.github.kfang.twitter
 
 import spray.json.DefaultJsonProtocol
 
