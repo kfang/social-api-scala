@@ -10,7 +10,7 @@ scalaVersion  := "2.11.5"
 
 crossScalaVersions := Seq("2.10.4", "2.11.5")
 
-version := "0.5.0-SNAPSHOT"
+version := "0.6.0-SNAPSHOT"
 
 scalacOptions ++= Seq("-feature", "-deprecation")
 
@@ -18,7 +18,7 @@ resolvers += "spray" at "http://repo.spray.io/"
 
 libraryDependencies ++= Seq(
   "org.scalaj"              %% "scalaj-http"            % "1.1.4",
-  "io.spray"                %% "spray-json"             % "1.2.6"
+  "io.spray"                %% "spray-json"             % "1.3.1"
 )
 
 pomExtra := {
